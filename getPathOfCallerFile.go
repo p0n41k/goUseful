@@ -1,17 +1,20 @@
 package gouseful
 
 import (
-	"runtime"
+	"os/exec"
 )
 
-func GetPathOfCallerFile() string {
-	_, path, _, _ := runtime.Caller(1)
+func GetPathOfCallerFile(osArg0 string) string {
+	cmd := exec.Command("pwd")
+	out, _ := cmd.CombinedOutput()
 
-	for i := len(path) - 1; i > -1; i-- {
-		if path[i] == '/' {
-			return path[:i]
+	fullpath := (string(out)[:len(out)-1] + osArg0[1:])
+
+	for i := len(fullpath) - 1; i > -1; i-- {
+		if fullpath[i] == '/' {
+			return fullpath[:i]
 		}
 	}
 
-	return path
+	return fullpath
 }
