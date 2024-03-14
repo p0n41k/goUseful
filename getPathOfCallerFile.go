@@ -20,7 +20,15 @@ func GetPathOfCallerFile(osArg0 string) string {
 		if err != nil {
 			return ""
 		}
-		return dir + osArg0[1:]
+
+		dir = dir + osArg0[1:]
+
+		for i := len(dir) - 1; i > -1; i-- {
+			if dir[i] == '/' {
+				return dir[:i+1]
+			}
+		}
+		return dir
 	}
 	return ""
 }
