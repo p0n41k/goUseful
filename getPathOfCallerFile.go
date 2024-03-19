@@ -1,7 +1,6 @@
 package gouseful
 
 import (
-	"os"
 	"runtime"
 )
 
@@ -16,19 +15,12 @@ func GetPathOfCallerFile(osArg0 string) string {
 			return file
 		}
 	} else {
-		dir, err := os.Getwd()
-		if err != nil {
-			return ""
-		}
-
-		dir = dir + osArg0[1:]
-
-		for i := len(dir) - 1; i > -1; i-- {
-			if dir[i] == '/' {
-				return dir[:i+1]
+		for i := len(osArg0) - 1; i > -1; i-- {
+			if osArg0[i] == '/' {
+				return osArg0[:i+1]
 			}
 		}
-		return dir
+		return osArg0
 	}
 	return ""
 }
