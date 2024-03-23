@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 func InputScaner() string {
@@ -19,10 +21,30 @@ func InputScaner() string {
 }
 
 func AnonimInput() string {
-	password, err := terminal.ReadPassword(int(os.Stdin.Fd()))
+	CtrlCExit()
+	password, err := term.ReadPassword(int(os.Stdin.Fd()))
 	if err != nil {
 		os.Exit(1)
 	}
 
 	return string(password)
+}
+
+func CtrlCExit() {
+	initialState, err := term.GetState(int(os.Stdin.Fd()))
+	if err != nil {
+		fmt.Println("Ошибка при получении состояния терминала:", err)
+		return
+	}
+
+	// Обработчик сигнала прерывания (Ctrl + C)
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		<-c
+		// Восстанавливаем состояние терминала перед выходом
+		term.Restore(int(os.Stdin.Fd()), initialState)
+		os.Exit(0)
+	}()
 }
