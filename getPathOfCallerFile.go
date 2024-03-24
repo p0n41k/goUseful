@@ -6,7 +6,7 @@ import (
 )
 
 func GetPathOfCallerFile(osArg0 string) string {
-	if osArg0[:5] == "/tmp/" {
+	if len(osArg0) >= 5 && osArg0[:5] == "/tmp/" {
 		if _, file, _, ok := runtime.Caller(1); ok {
 			for i := len(file) - 1; i > -1; i-- {
 				if file[i] == '/' {
